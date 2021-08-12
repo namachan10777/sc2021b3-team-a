@@ -4,13 +4,15 @@ import { Auth0Provider } from '@auth0/auth0-react'
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import settings from './settings_ida.json';
 
 ReactDOM.render(
   <React.StrictMode>
     <Auth0Provider
-    domain="dev--0ab7qcf.us.auth0.com"
-    clientId="SjJfnFeRo0PBmfKcFcVqSYtMtNerjLum"
-    redirectUri={window.location.origin}
+      domain={settings.domain}
+      clientId={settings.clientId}
+      audience={settings.audience}
+      redirectUri={window.location.origin}
     >
       <App />
     </Auth0Provider>

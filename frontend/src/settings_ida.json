@@ -1,0 +1,6 @@
+{
+	"domain": "dev--0ab7qcf.us.auth0.com",
+    "clientId": "SjJfnFeRo0PBmfKcFcVqSYtMtNerjLum",
+    "apiEndpoint": "https://7f0ocuteo8.execute-api.ap-northeast-1.amazonaws.com/",
+    "audience": "https://example.nekoruri.jp/"
+}
