@@ -1,0 +1,79 @@
+service: sc2021b3api
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: ap-northeast-1
+  lambdaHashingVersion: '20201221'
+  iam:
+    role:
+      statements:
+        - Effect: 'Allow'
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource: arn:aws:dynamodb:*:*:table/*
+        - Effect: 'Allow'
+          Action:
+            - s3:putObject
+            - s3:putObjectAcl
+          Resource: arn:aws:s3:::sc2021b3-demoapp-379/*
+  httpApi:
+    cors: true
+    authorizers:
+      auth0Authorizer:
+        type: jwt
+        identitySource: $request.header.Authorization
+        issuerUrl: https://dev--0ab7qcf.us.auth0.com/
+        audience: https://example.nekoruri.jp/
+
+functions:
+  get:
+    handler: handler.get
+    events:
+      - httpApi:
+          method: GET
+          path: /
+          authorizer: auth0Authorizer
+  post:
+    handler: handler.post
+    events:
+      - httpApi:
+          method: POST
+          path: /
+          authorizer: auth0Authorizer
+
+resources:
+  Resources:
+    DynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: username
+            AttributeType: S
+          - AttributeName: created_at
+            AttributeType: N
+        KeySchema:
+          - AttributeName: username
+            KeyType: HASH
+          - AttributeName: created_at
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: posts
+    ImageS3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: 'sc2021b3-demoapp-379'
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders: ["*"]
+              AllowedMethods: ["GET", "PUT", "HEAD"]
+              AllowedOrigins: ["*"]
